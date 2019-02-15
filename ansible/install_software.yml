@@ -1,0 +1,9 @@
+- hosts: all
+  become: true
+  roles:
+    - docker
+    - git
+ #   - jenkins
+    - ansible-prometheus
+    - ansible-node-exporter
+#    - ansible-grafana

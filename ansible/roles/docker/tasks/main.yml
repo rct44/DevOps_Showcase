@@ -1,0 +1,35 @@
+---
+# tasks file for docker
+- name: Install docker pre-requisites
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+
+- name: Add docker repository
+  yum_repository:
+    name: docker-ce
+    description: docker-ce stable
+    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+    gpgkey: https://download.docker.com/linux/centos/gpg
+
+- name: yum install docker-ce
+  yum:
+    name: docker-ce
+    update_cache: yes
+
+- name: docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Add user vagrant to docker group
+  user:
+    name: vagrant
+    groups: docker
+    append: yes
+  become: yes
