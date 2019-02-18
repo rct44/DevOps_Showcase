@@ -3,7 +3,7 @@
   roles:
     - docker
     - git
- #   - jenkins
-    - ansible-prometheus
-    - ansible-node-exporter
-#    - ansible-grafana
+    - jenkins
+    - prometheus
+    - node-exporter
+    - grafana

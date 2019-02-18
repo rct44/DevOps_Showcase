@@ -1,7 +1,9 @@
 ---
 # tasks file for jenkins
 - include_role:
-    name: oracle-java
+    name: geerlingguy.java
+  vars:
+    java_packages: java-1.8.0-openjdk
 
 - name: Install python-pycurl
   yum: name=python-pycurl state=installed

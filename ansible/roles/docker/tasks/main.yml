@@ -2,12 +2,12 @@
 # tasks file for docker
 - name: Install docker pre-requisites
   yum:
-    name: "{{ item }}"
+    name: ['yum-utils', 'device-mapper-persistent-data', 'lvm2']
     state: latest
-  with_items:
-    - yum-utils
-    - device-mapper-persistent-data
-    - lvm2
+ # with_items:
+ #   - yum-utils
+ #   - device-mapper-persistent-data
+ #   - lvm2
 
 - name: Add docker repository
   yum_repository:

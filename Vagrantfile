@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
   config.vm.hostname = "vagrantCentos"
 #  config.vm.synced_folder "share/", "/vagrant"
   config.vm.synced_folder ".", "/vagrant"
-  config.vm.network "forwarded_port", guest: 8081, host: 1234
+  config.vm.network "forwarded_port", guest: 8081, host: 1432
 
   config.vm.provider "virtualbox" do |vb|
    # Display the VirtualBox GUI when booting the machine
@@ -25,9 +25,11 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-'SHELL'
-	 sudo yum install ansible -y
-	 sudo yum upgrade ansible
-	 cd /vagrant/ansible
-	 ansible-playbook -i 'localhost,' -c local site.yml
+    sudo yum install epel-release -y
+	sudo yum install ansible -y
+	sudo yum upgrade ansible
+	cd /vagrant/ansible
+	ansible-galaxy install -r requirements.yml
+	ansible-playbook -i 'localhost,' -c local site.yml
   SHELL
 end
