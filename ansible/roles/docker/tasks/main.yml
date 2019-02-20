@@ -21,6 +21,11 @@
     name: docker-ce
     update_cache: yes
 
+- name: yum install docker compose
+  yum:
+    name: docker-compose
+    update_cache: yes
+
 - name: docker service
   service:
     name: docker

@@ -1,0 +1,12 @@
+---
+- name: start dockerized app
+  hosts: all
+  become: true
+
+  tasks:
+  - name: docker-compose up
+    shell: 'docker-compose up &'
+    args:
+      chdir: /vagrant/
+
+

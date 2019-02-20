@@ -6,4 +6,4 @@
     - jenkins
     - prometheus
     - node-exporter
-    - grafana
+ #   - grafana
