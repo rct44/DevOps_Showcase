@@ -1,0 +1,8 @@
+---
+# tasks file for git
+- name: Install git
+  yum:
+    name:
+      - git
+      - git-svn
+

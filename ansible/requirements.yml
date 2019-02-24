@@ -1,0 +1,11 @@
+# from galaxy, overriding the name
+- src: cloudalchemy.node-exporter
+  name: node-exporter
+
+- src: cloudalchemy.prometheus
+  name: prometheus
+
+- src: cloudalchemy.grafana
+  name: grafana
+
+- src: geerlingguy.java
