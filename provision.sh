@@ -52,7 +52,8 @@ scrape_configs:
 
     static_configs:
     - targets: ['10.0.0.10:9100']
-	
+
+
 EOF
 
 sudo chown prometheus:prometheus /etc/prometheus/prometheus.yml
@@ -2602,14 +2603,14 @@ sudo cat <<EOF > /var/lib/grafana/dashboards/dashboards.json
         ]
       },
       "timezone": "browser",
-      "title": "Test VM 1",
-      "uid": null,
+      "title": "DevopsShowcaseVM",
+      "uid": "DevopsShowcaseVM",
       "version": 1
 }
 EOF
 
 
-cat <<EOF > /var/lib/grafana/dashboards/alertsDshboard.json
+cat <<EOF > /var/lib/grafana/dashboards/alertsDashboard.json
 {
     "annotations": {
     "list": [
@@ -2624,7 +2625,7 @@ cat <<EOF > /var/lib/grafana/dashboards/alertsDshboard.json
       }
     ]
   },
-  "editable": true,
+  "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
@@ -2735,12 +2736,15 @@ cat <<EOF > /var/lib/grafana/dashboards/alertsDshboard.json
   },
   "timezone": "",
   "title": "Alerts Dashboard",
-  "uid": null,
+  "uid": "DevopsShowcaseVMAlerts",
   "version": 1
 }
 EOF
 
 sudo sed -i 's/;provisioning/provisioning/g' /etc/grafana/grafana.ini
 
-sudo service grafana-server start
+
+sudo service grafana-server restart
+
+sudo service grafana-server status
 
