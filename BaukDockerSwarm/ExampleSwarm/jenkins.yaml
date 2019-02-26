@@ -1,0 +1,83 @@
+jenkins:
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+       - id: "admin"
+         password: "admin"
+  authorizationStrategy:
+    globalMatrix:
+      grantedPermissions:
+        - "Overall/Administer:authenticated"
+  nodes:
+    - permanent:
+        labelString: "linux docker git"
+        mode: NORMAL
+        name: "docker slave"
+        remoteFS: "/jenkins"
+        launcher:
+          SSHLauncher:
+            host: jenkins_slave_docker
+            port: 22
+            credentialsId: slaveSSH
+            launchTimeoutSeconds: 60
+            maxNumRetries: 3
+            retryWaitTime: 30
+            sshHostKeyVerificationStrategy:
+              manuallyTrustedKeyVerificationStrategy:
+                requireInitialManualTrust: false
+tool:
+  git:
+    installations:
+      - name: git
+        home: /usr/bin/git
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+        - basicSSHUserPrivateKey:
+              scope: SYSTEM
+              id: slaveSSH
+              username: slave
+              passphrase: ${SSH_SLAVE_KEY_PASSWORD}
+              description: "SSH Key for slaves"
+              privateKeySource:
+                directEntry:
+                  privateKey: ${SSH_SLAVE_KEY}
+jobs:
+  - script: >
+      multibranchPipelineJob('PetClinic') {
+          branchSources {
+              git {
+                  remote('https://github.com/BaukJ/spring-petclinic.git')
+                  //credentialsId('github-ci')
+              }
+          }
+          orphanedItemStrategy {
+              discardOldItems {
+                  numToKeep(20)
+              }
+          }
+      }
+  - script: >
+       folder('testjobs')
+  - script: >
+       pipelineJob('testjobs/default-agent') {
+         definition {
+           cps {
+             script("""\
+               pipeline {
+                 agent any
+                 stages {
+                   stage ('test') {
+                     steps {
+                       echo "hello"
+                     }
+                   }
+                 }
+               }""".stripIndent())
+           }
+         }
+       }
+
+

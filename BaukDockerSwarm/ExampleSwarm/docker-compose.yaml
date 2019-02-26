@@ -1,0 +1,71 @@
+version: '3.5'
+
+
+services:
+  jenkins:
+    image: bauk/jenkins-master:$VERSION
+    build: images/jenkins-master
+    environment:
+      - CASC_JENKINS_CONFIG=/usr/share/jenkins/ref/jenkins.yaml
+    volumes:
+      - $PWD/jenkins.yaml:/usr/share/jenkins/ref/jenkins.yaml
+    secrets:
+      - source: SSH_SLAVE_KEY
+      - source: SSH_SLAVE_KEY_PASSWORD
+      - source: JENKINS_ADMIN_USER
+      - source: JENKINS_ADMIN_PASSWORD
+    ports:
+      - 9000:8080
+  jenkins_slave:
+    image: bauk/jenkins-ssh_slave:$VERSION
+    build:
+      context: images/jenkins-ssh_slave
+    environment:
+      - SSH_USER=slave
+      - SSH_USER_EXTRA_DIRS=/jenkins
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - $PWD/tmp/slave_run:/run
+    secrets:
+      - source: SSH_SLAVE_PUBLIC_KEY
+        target: SSH_PUBLIC_KEY
+    deploy:
+      replicas: 0
+  jenkins_slave_docker:
+    image: bauk/jenkins-ssh_slave-docker:$VERSION
+    build:
+      context: images/jenkins-ssh_slave-docker
+      args:
+        VERSION: ${VERSION}
+    environment:
+      - SSH_USER=slave
+      - SSH_USER_EXTRA_DIRS=/jenkins
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - $PWD/tmp/slave_run:/run
+      - /var/run/docker.sock:/var/run/docker.sock
+    secrets:
+      - source: SSH_SLAVE_PUBLIC_KEY
+        target: SSH_PUBLIC_KEY
+
+
+  visualiser:
+    image: dockersamples/visualizer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8080:8080
+
+
+secrets:
+  SSH_SLAVE_KEY:
+    file: secrets/SSH_SLAVE_KEY
+  SSH_SLAVE_KEY_PASSWORD:
+    file: secrets/SSH_SLAVE_KEY_PASSWORD
+  SSH_SLAVE_PUBLIC_KEY:
+    file: secrets/SSH_SLAVE_PUBLIC_KEY
+  JENKINS_ADMIN_USER:
+    file: secrets/JENKINS_ADMIN_USER
+  JENKINS_ADMIN_PASSWORD:
+    file: secrets/JENKINS_ADMIN_PASSWORD
+
