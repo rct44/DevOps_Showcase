@@ -2741,6 +2741,25 @@ cat <<EOF > /var/lib/grafana/dashboards/alertsDashboard.json
 }
 EOF
 
+sudo cat <<EOF > /usr/share/grafana/conf/provisioning/notifiers/notifySlack.yaml
+notifiers:
+  - name: ACT-notification-channel-1
+    type: slack
+    uid: DevopsShowcaseVMAlerts
+    # either
+    org_id: 1
+    # or
+    org_name: Main Org.
+    is_default: true
+    # See `Supported Settings` section for settings supporter for each
+    # alert notification type.
+    settings:
+      recipient: "XXX"
+      token: "xoxb"
+      uploadImage: true
+      url: "https://hooks.slack.com/services/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i"
+EOF
+
 sudo sed -i 's/;provisioning/provisioning/g' /etc/grafana/grafana.ini
 
 
