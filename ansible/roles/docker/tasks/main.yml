@@ -121,9 +121,6 @@
     url: "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-{{ ansible_system }}-{{ ansible_machine }}"
     dest: /usr/local/bin/docker-compose
     mode: +x
-  tags:
-    - compose 
-
 
 - name: Enable docker service
   service:
