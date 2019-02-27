@@ -1,13 +1,80 @@
+#---
+## tasks file for docker
+#- name: Install docker pre-requisites
+#  yum:
+#    name: ['yum-utils', 'device-mapper-persistent-data', 'lvm2']
+#    state: latest
+# # with_items:
+# #   - yum-utils
+# #   - device-mapper-persistent-data
+# #   - lvm2
+#
+#- name: Add docker repository
+#  yum_repository:
+#    name: docker-ce
+#    description: docker-ce stable
+#    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+#    gpgkey: https://download.docker.com/linux/centos/gpg
+#
+#- name: yum install docker-ce
+#  yum:
+#    name: docker-ce
+#    update_cache: yes
+#
+#- name: yum install docker compose
+#  yum:
+#    name: docker-compose
+#    update_cache: yes
+#
+#- name: docker service
+#  service:
+#    name: docker
+#    state: started
+#    enabled: yes
+#
+#- name: Add user vagrant to docker group
+#  user:
+#    name: vagrant
+#    groups: docker
+#    append: yes
+#  become: yes
 ---
 # tasks file for docker
+- name: set facts for docker_engine value
+  set_fact:
+    docker_engine: true
+  tags:
+    - docker-engine
+
+- name: Create docker group
+  group:
+    name: docker
+    state: present
+    system:
+    gid: 1050
+  tags:
+    - always
+
+- name: docker user
+  user:
+    name: docker
+    uid: 11025
+  tags:
+    - always
+
+- name: Create docker root data dir
+  file:
+    path: /data/docker_root
+    owner: root
+    group: docker
+    state: directory
+  tags:
+    - always
+
 - name: Install docker pre-requisites
   yum:
     name: ['yum-utils', 'device-mapper-persistent-data', 'lvm2']
     state: latest
- # with_items:
- #   - yum-utils
- #   - device-mapper-persistent-data
- #   - lvm2
 
 - name: Add docker repository
   yum_repository:
@@ -16,21 +83,12 @@
     baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
     gpgkey: https://download.docker.com/linux/centos/gpg
 
-- name: yum install docker-ce
+- name: Install docker 'RedHat' version
   yum:
-    name: docker-ce
-    update_cache: yes
-
-- name: yum install docker compose
-  yum:
-    name: docker-compose
-    update_cache: yes
-
-- name: docker service
-  service:
     name: docker
-    state: started
-    enabled: yes
+    state: latest
+    update_cache: yes
+  when: ansible_os_family == 'RedHat'
 
 - name: Add user vagrant to docker group
   user:
@@ -38,3 +96,42 @@
     groups: docker
     append: yes
   become: yes
+
+- name: Python-pip is present
+  package: name=python-pip state=present
+  tags:
+    - always
+
+- name: Install docker-py
+  pip:
+    name: docker-py
+    state: latest
+  tags:
+    - docker-engine
+
+- name: Pip Cache
+  file:
+    path: /tmp/pip-cache
+    state: directory
+  tags:
+    - always
+
+- name: Install docker-compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/1.21.2/docker-compose-{{ ansible_system }}-{{ ansible_machine }}"
+    dest: /usr/local/bin/docker-compose
+    mode: +x
+  tags:
+    - qa
+    - local
+
+- name: Enable docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  tags:
+    - always
+
+- name: Init docker swarm manager (local)
+  command: "docker swarm init --advertise-addr {{ ansible_enp0s8.ipv4.address }}"

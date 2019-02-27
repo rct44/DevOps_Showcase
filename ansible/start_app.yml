@@ -3,10 +3,30 @@
   hosts: all
   become: true
 
+#  tasks:
+#  - name: docker-compose up
+#    shell: 'docker-compose up &'
+#    args:
+#      chdir: /vagrant/
   tasks:
-  - name: docker-compose up
-    shell: 'docker-compose up &'
-    args:
-      chdir: /vagrant/
+    - name: Change permissions on compose file
+      file:
+        path: "/vagrant/docker-compose.yml"
+        owner: docker
+        group: bin
+        mode: 0755
 
+    - name: Set up local registry
+      command: "docker service create --name registry --publish published=5001,target=5000 registry:2"
+
+    - name: Build web app docker image locally
+      command: "docker build --tag 127.0.0.1:5001/web-app /vagrant"
+
+    - name: Push image
+      command: "docker push 127.0.0.1:5001/web-app"
+      args:
+        chdir: /vagrant
+
+    - name: Create Docker Stack for web app
+      command: "docker stack deploy -c /vagrant/docker-compose.yml web_app_stack"
 

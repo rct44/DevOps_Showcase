@@ -3,6 +3,11 @@
   roles:
     - docker
     - git
+#    - jenkins
     - prometheus
     - node-exporter
-    #- grafana
+    - role: grafana
+      vars:
+        grafana_security:
+          admin_user: "admin"
+          admin_password: "admin"
