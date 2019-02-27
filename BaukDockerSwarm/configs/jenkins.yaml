@@ -66,20 +66,6 @@ credentials:
 
 jobs:
   - script: >
-      multibranchPipelineJob('PetClinic') {
-          branchSources {
-              git {
-                  remote('https://github.com/BaukJ/spring-petclinic.git')
-                  //credentialsId('github-ci')
-              }
-          }
-          orphanedItemStrategy {
-              discardOldItems {
-                  numToKeep(20)
-              }
-          }
-      }
-  - script: >
       multibranchPipelineJob('PetClinic_Local') {
           branchSources {
               git {
