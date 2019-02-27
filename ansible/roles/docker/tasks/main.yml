@@ -85,7 +85,7 @@
 
 - name: Install docker 'RedHat' version
   yum:
-    name: docker
+    name: docker-ce
     state: latest
     update_cache: yes
   when: ansible_os_family == 'RedHat'
@@ -97,33 +97,33 @@
     append: yes
   become: yes
 
-- name: Python-pip is present
-  package: name=python-pip state=present
-  tags:
-    - always
+ #- name: Python-pip is present
+ # package: name=python-pip state=present
+ #tags:
+ #   - always
 
-- name: Install docker-py
-  pip:
-    name: docker-py
-    state: latest
-  tags:
-    - docker-engine
+  #- name: Install docker-py
+  #pip:
+  #  name: docker-py
+  #  state: latest
+  #tags:
+  #  - docker-engine
 
-- name: Pip Cache
-  file:
-    path: /tmp/pip-cache
-    state: directory
-  tags:
-    - always
+  #- name: Pip Cache
+  #file:
+  # path: /tmp/pip-cache
+  # state: directory
+  #tags:
+  # - always
 
 - name: Install docker-compose
   get_url:
-    url: "https://github.com/docker/compose/releases/download/1.21.2/docker-compose-{{ ansible_system }}-{{ ansible_machine }}"
+    url: "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-{{ ansible_system }}-{{ ansible_machine }}"
     dest: /usr/local/bin/docker-compose
     mode: +x
   tags:
-    - qa
-    - local
+    - compose 
+
 
 - name: Enable docker service
   service:
