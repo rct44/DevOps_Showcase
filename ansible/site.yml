@@ -1,3 +1,2 @@
 # playbook file for installing software
 - import_playbook: install_software.yml
-- import_playbook: start_app.yml
