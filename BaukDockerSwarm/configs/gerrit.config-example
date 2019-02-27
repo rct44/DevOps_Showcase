@@ -1,0 +1,31 @@
+[gerrit]
+        basePath = git
+        serverId = 0b5ed293-a0ba-47e2-9460-7cbe0bda5314
+        canonicalWebUrl = http://7915e28fa49d:8080/
+[database]
+        type = h2
+        database = db/ReviewDB
+[index]
+        type = LUCENE
+[auth]
+        type = DEVELOPMENT_BECOME_ANY_ACCOUNT
+[sendemail]
+        smtpServer = localhost
+[sshd]
+        listenAddress = *:29418
+[httpd]
+        listenUrl = http://*:8080/
+        filterClass = com.googlesource.gerrit.plugins.ootb.FirstTimeRedirect
+        firstTimeRedirectUrl = /login/%23%2F?account_id=1000000
+[cache]
+        directory = cache
+[plugins]
+        allowRemoteAdmin = true
+[container]
+        javaOptions = "-Dflogger.backend_factory=com.google.common.flogger.backend.log4j.Log4jBackendFactory#getInstance"
+        javaOptions = "-Dflogger.logging_context=com.google.gerrit.server.logging.LoggingContext#getInstance"
+        user = gerrit
+        javaHome = /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.191.b12-1.el7_6.x86_64/jre
+        javaOptions = -Djava.security.egd=file:/dev/./urandom
+[receive]
+        enableSignedPush = false

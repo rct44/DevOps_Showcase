@@ -1,0 +1,116 @@
+version: '3.5'
+
+
+services:
+  jenkins:
+    image: bauk/jenkins-master:$VERSION
+    environment:
+      - CASC_JENKINS_CONFIG=/jenkins.yaml
+    volumes:
+      - $PWD/mounts/jenkins/gerrit-trigger.xml:/var/jenkins_home/gerrit-trigger.xml
+    #   - $PWD/configs/jenkins.yaml:/jenkins.yaml
+    configs:
+      - source: jenkins
+        target: /jenkins.yaml
+    #   - source: jenkins_gerrittrigger
+    #     target: /var/jenkins_home/gerrit-trigger.xml
+    secrets:
+      - source: SSH_KEY
+        uid: '1000'
+        mode: 0700
+      - source: SSH_KEY_PASSWORD
+        uid: '1000'
+      - source: JENKINS_ADMIN_USER
+        uid: '1000'
+      - source: JENKINS_ADMIN_PASSWORD
+        uid: '1000'
+      - source: ADMIN_USER
+        uid: '1000'
+      - source: ADMIN_PASSWORD
+        uid: '1000'
+      - source: LDAP_PASSWORD
+        uid: '1000'
+    ports:
+      - 9000:8080
+    deploy:
+      replicas: 1
+  jenkins_slave_docker:
+    image: bauk/jenkins-ssh_slave-docker:$VERSION
+    environment:
+      - SSH_USER=jenkins
+      - SSH_USER_EXTRA_DIRS=/jenkins
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - $PWD/mounts/slave_run:/run
+      - /var/run/docker.sock:/var/run/docker.sock
+    secrets:
+      - source: SSH_PUBLIC_KEY
+        target: SSH_PUBLIC_KEY
+    deploy:
+      replicas: 1
+
+  gerrit:
+    image: bauk/gerrit:$VERSION
+    ports:
+      - 29418:29418
+      - 8080:8080
+    environment:
+      # - CANONICAL_WEB_URL=http://localhost:8080
+      - WEBURL=http://localhost:8080
+      - AUTH_TYPE=ldap
+      - LDAP_SERVER=ldap://ldap
+      - LDAP_ACCOUNTBASE=dc=example,dc=org
+      - LDAP_PASSWORD=admin
+      - LDAP_USERNAME=cn=admin,dc=example,dc=org
+    deploy:
+      replicas: 1
+    volumes:
+      - $PWD/mounts/gerrit-review_site:/var/gerrit/review_site
+
+  ldap:
+    image: osixia/openldap:1.1.10
+    command: --copy-service #--loglevel debug
+    ports:
+      - 389:389
+#     - 636:636
+    configs:
+      - source: ldap
+        target: /container/service/slapd/assets/config/bootstrap/ldif/custom/config.ldif
+  ldapadmin:
+    image: osixia/phpldapadmin
+    ports:
+      - 6443:443
+      - 680:80
+    environment:
+     - PHPLDAPADMIN_LDAP_HOSTS=ldap
+    depends_on:
+      - ldap
+
+configs:
+  jenkins:
+    file: configs/jenkins.yaml
+  jenkins_gerrittrigger:
+    file: configs/gerrit-trigger.xml
+  gerrit:
+    file: configs/gerrit.config
+  ldap:
+    file: configs/ldap.ldif
+
+secrets:
+  SSH_KEY:
+    file: secrets/SSH_KEY
+  SSH_KEY_PASSWORD:
+    file: secrets/SSH_KEY_PASSWORD
+  SSH_PUBLIC_KEY:
+    file: secrets/SSH_PUBLIC_KEY
+  JENKINS_ADMIN_USER:
+    file: secrets/JENKINS_ADMIN_USER
+  JENKINS_ADMIN_PASSWORD:
+    file: secrets/JENKINS_ADMIN_PASSWORD
+  ADMIN_USER:
+    file: secrets/ADMIN_USER
+  ADMIN_PASSWORD:
+    file: secrets/ADMIN_PASSWORD
+  LDAP_PASSWORD:
+    file: secrets/LDAP_PASSWORD
+

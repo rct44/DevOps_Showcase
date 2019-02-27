@@ -1,0 +1,82 @@
+# # # # # UNITS
+dn: ou=people,{{ LDAP_BASE_DN }}
+changetype: add
+ou: people
+objectClass: organizationalUnit
+objectClass: top
+-
+dn: ou=groups,{{ LDAP_BASE_DN }}
+changetype: add
+ou: groups
+objectClass: organizationalUnit
+objectClass: top
+-
+
+# # # # # PEOPLE
+dn: cn=jenkins,ou=people,{{ LDAP_BASE_DN }}
+changetype: add
+givenname: Jenkins
+sn: Hudson
+uid: jenkins
+uidnumber: 7001
+gidnumber: 501
+mail: jenkins@example.com
+homedirectory: /home/jenkins
+userpassword: {MD5}q2OnY2LDlyrIPVy4gw/bUQ==
+objectclass: top
+objectclass: posixAccount
+objectclass: inetOrgPerson
+-
+dn: cn=admin,ou=people,{{ LDAP_BASE_DN }}
+changetype: add
+givenname: Admin (Delete me)
+sn: Strator
+uid: admin
+uidnumber: 7000
+gidnumber: 501
+mail: admin@example.com
+homedirectory: /home/admin
+userpassword: {MD5}ISMvKXpXpadDiUoOSoAfww==
+description: DELETE ME!
+ I am only for testing!
+objectclass: top
+objectclass: posixAccount
+objectclass: inetOrgPerson
+-
+
+# # # # # GROUPS
+dn: cn=jenkins_admin,ou=groups,{{ LDAP_BASE_DN }}
+changetype: add
+gidNumber: 101
+memberuid: jenkins
+memberuid: admin
+objectClass: PosixGroup
+objectClass: top
+-
+dn: cn=gerrit_admin,ou=groups,{{ LDAP_BASE_DN }}
+changetype: add
+gidNumber: 111
+memberuid: admin
+objectClass: PosixGroup
+objectClass: top
+-
+dn: cn=gerrit_elevated,ou=groups,{{ LDAP_BASE_DN }}
+changetype: add
+gidNumber: 112
+memberuid: admin
+objectClass: PosixGroup
+objectClass: top
+-
+dn: cn=gerrit_subscribers,ou=groups,{{ LDAP_BASE_DN }}
+changetype: add
+gidNumber: 113
+memberuid: jenkins
+objectClass: PosixGroup
+objectClass: top
+-
+dn: cn=ldap_admin,ou=groups,{{ LDAP_BASE_DN }}
+changetype: add
+gidNumber: 121
+memberuid: admin
+objectClass: PosixGroup
+objectClass: top

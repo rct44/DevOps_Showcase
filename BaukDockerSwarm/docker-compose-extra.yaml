@@ -1,0 +1,22 @@
+version: '3.5'
+
+
+services:
+  ldapadmin:
+    image: osixia/phpldapadmin
+    ports:
+      - 6443:443
+      - 680:80
+    environment:
+     - PHPLDAPADMIN_LDAP_HOSTS=ldap
+    depends_on:
+      - ldap
+
+  visualiser:
+    image: dockersamples/visualizer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8081:8080
+    deploy:
+      replicas: 0

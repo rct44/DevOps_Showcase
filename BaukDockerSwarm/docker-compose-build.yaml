@@ -1,0 +1,22 @@
+version: '3.5'
+
+
+services:
+  jenkins:
+    image: bauk/jenkins-master:$VERSION
+    build: images/jenkins-master
+  jenkins_slave:
+    image: bauk/jenkins-ssh_slave:$VERSION
+    build:
+      context: images/jenkins-ssh_slave
+  jenkins_slave_docker:
+    image: bauk/jenkins-ssh_slave-docker:$VERSION
+    build:
+      context: images/jenkins-ssh_slave-docker
+      args:
+        VERSION: ${VERSION}
+
+  gerrit:
+    image: bauk/gerrit:$VERSION
+    build: images/gerrit
+
