@@ -99,6 +99,25 @@ jobs:
           }
       }
   - script: >
+      multibranchPipelineJob('PythonApp_Local') {
+          branchSources {
+              git {
+                remote('ssh://jenkins@gerrit:29418/PythonApp.git')
+                credentialsId('jenkinsSSH')
+              }
+          }
+          factory {
+            workflowBranchProjectFactory {
+              scriptPath('Jenkinsfile')
+            }
+          }
+          orphanedItemStrategy {
+              discardOldItems {
+                  numToKeep(20)
+              }
+          }
+      }
+  - script: >
        folder('testjobs')
   - script: >
        pipelineJob('testjobs/default-agent') {
