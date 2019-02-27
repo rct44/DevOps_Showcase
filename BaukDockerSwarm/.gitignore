@@ -1,1 +1,15 @@
-mounts
+/tmp/
+
+# These are in the dev branch
+/docker-compose-dev.yaml
+/run_dev.sh
+
+# For mounts:
+/mounts-keep/gerrit-review_site/**/*.lock.db
+/mounts-keep/slave_run/
+/mounts-keep/gerrit-review_site/logs/
+/mounts-keep/gerrit-review_site/tmp/
+# This file is very large  (>50M) but is not needed
+/mounts-keep/gerrit-review_site/bin/gerrit.war
+
+/mounts/
