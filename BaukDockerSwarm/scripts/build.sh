@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 export VERSION=${VERSION:-`git describe --tags`}
+export VERSION=${VERSION:-DEV}
 
 printf "
             BUILDING
