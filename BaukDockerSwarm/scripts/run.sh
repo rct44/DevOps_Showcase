@@ -11,7 +11,7 @@ printf "
 
 docker-compose pull
 
-sudo rm -rf mounts
-cp -r mounts-keep mounts
+sudo rm -rf /tmp/mounts
+cp -r mounts-keep /tmp/mounts
 
 docker stack deploy --compose-file docker-compose.yaml example

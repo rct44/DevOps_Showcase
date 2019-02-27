@@ -7,8 +7,8 @@ services:
     environment:
       - CASC_JENKINS_CONFIG=/jenkins.yaml
     volumes:
-      - $PWD/mounts/jenkins/gerrit-trigger.xml:/var/jenkins_home/gerrit-trigger.xml
-    #   - $PWD/configs/jenkins.yaml:/jenkins.yaml
+      - /tmp/mounts/jenkins/gerrit-trigger.xml:/var/jenkins_home/gerrit-trigger.xml
+    #   - /tmp/configs/jenkins.yaml:/jenkins.yaml
     configs:
       - source: jenkins
         target: /jenkins.yaml
@@ -41,7 +41,7 @@ services:
       - SSH_USER_EXTRA_DIRS=/jenkins
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - $PWD/mounts/slave_run:/run
+      - /tmp/mounts/slave_run:/run
       - /var/run/docker.sock:/var/run/docker.sock
     secrets:
       - source: SSH_PUBLIC_KEY
@@ -65,7 +65,7 @@ services:
     deploy:
       replicas: 1
     volumes:
-      - $PWD/mounts/gerrit-review_site:/var/gerrit/review_site
+      - /tmp/mounts/gerrit-review_site:/var/gerrit/review_site
 
   ldap:
     image: osixia/openldap:1.1.10
@@ -76,15 +76,23 @@ services:
     configs:
       - source: ldap
         target: /container/service/slapd/assets/config/bootstrap/ldif/custom/config.ldif
-  ldapadmin:
-    image: osixia/phpldapadmin
+  #ldapadmin:
+  #  image: osixia/phpldapadmin
+  #  ports:
+  #    - 6443:443
+  #    - 680:80
+  #  environment:
+  #   - PHPLDAPADMIN_LDAP_HOSTS=ldap
+  #  depends_on:
+  #    - ldap
+  visualiser:
+    image: dockersamples/visualizer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - 6443:443
-      - 680:80
-    environment:
-     - PHPLDAPADMIN_LDAP_HOSTS=ldap
-    depends_on:
-      - ldap
+      - 8081:8080
+    deploy:
+      replicas: 1
 
 configs:
   jenkins:

@@ -13,6 +13,9 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 5000, host: 5000
   config.vm.network "forwarded_port", guest: 6379, host: 6379
   config.vm.network "forwarded_port", guest: 8080, host: 8080
+  config.vm.network "forwarded_port", guest: 9000, host: 9000
+  config.vm.network "forwarded_port", guest: 8081, host: 8081
+  config.vm.network "forwarded_port", guest: 8082, host: 8082
   
   config.vm.provider "virtualbox" do |vb|
    # Display the VirtualBox GUI when booting the machine
@@ -43,6 +46,6 @@ Vagrant.configure("2") do |config|
    config.vm.provision "shell" do |s|
    s.path = "./provision.sh"
   end
-  config.vm.provision "shell", inline: "cd ./BaukDockerSwarm && scripts/run_local.sh"
+  config.vm.provision "shell", inline: "export VERSION=showcase && export PATH=$PATH:/usr/local/bin && cd ./BaukDockerSwarm && scripts/run.sh"
   
 end
