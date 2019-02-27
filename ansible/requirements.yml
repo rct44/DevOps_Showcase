@@ -4,8 +4,3 @@
 
 - src: cloudalchemy.prometheus
   name: prometheus
-
-- src: cloudalchemy.grafana
-  name: grafana
-
-- src: geerlingguy.java

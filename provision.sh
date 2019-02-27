@@ -2763,6 +2763,8 @@ EOF
 sudo sed -i 's/;provisioning/provisioning/g' /etc/grafana/grafana.ini
 
 
+sudo systemctl enable grafana-server.service
+
 sudo service grafana-server restart
 
 sudo service grafana-server status
